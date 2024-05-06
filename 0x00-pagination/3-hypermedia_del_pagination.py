@@ -3,7 +3,7 @@ import math
 from typing import Dict, List
 import os
 cwd = os.getcwd
-file_path = os.path.join(cwd,'C:\Users\ahmed el bahi\alx-backend\0x00-pagination\Popular_Baby_Names.csv', 'Popular_Baby_Names.csv' )
+file_path = os.path.join(cwd,'C:\Users\ahmed el bahi\alx-backend\0x00-pagination\Popular_Baby_Names.csv', '' )
 
 class Server:
     """Server class to paginate a database of popular baby names."""
