@@ -1,7 +1,10 @@
 import csv
 from typing import List
+"""_summary_
 
-index_range = __import__('0-simple_helper_function.py')
+    Returns:
+        _type_: _description_
+"""
 
 class Server:
     """Server class to paginate a database of popular baby names.
