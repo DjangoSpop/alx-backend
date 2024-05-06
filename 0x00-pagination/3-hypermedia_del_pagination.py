@@ -1,12 +1,16 @@
+#!/usr/bin/env python3
+"""
+Deletion-resilient hypermedia pagination
+"""
+
 import csv
 import math
-from typing import Dict, List
-import os
-cwd = os.getcwd
-file_path = os.path.join(cwd,'C:\Users\ahmed el bahi\alx-backend\0x00-pagination\Popular_Baby_Names.csv', '' )
+from typing import List, Dict
+
 
 class Server:
-    """Server class to paginate a database of popular baby names."""
+    """Server class to paginate a database of popular baby names.
+    """
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
@@ -14,7 +18,8 @@ class Server:
         self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
-        """Cached dataset"""
+        """Cached dataset
+        """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
@@ -24,7 +29,8 @@ class Server:
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
-        """Dataset indexed by sorting position, starting at 0"""
+        """Dataset indexed by sorting position, starting at 0
+        """
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             truncated_dataset = dataset[:1000]
@@ -33,33 +39,31 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-        """
-        Returns a dictionary containing hypermedia pagination information based on an index.
-        
-        Args:
-            index (int, optional): The starting index of the page. Defaults to None.
-            page_size (int, optional): The number of items per page. Defaults to 10.
-            
-        Returns:
-            Dict: A dictionary containing hypermedia pagination information.
-        """
-        data = []
-        indexed_dataset = self.indexed_dataset()
-        next_index = index + page_size if index + page_size < len(indexed_dataset) else None
+    def get_hyper_index(self, index: int = None,
+                        page_size: int = 10) -> Dict:
+        """ return all data"""
 
         if index is None:
             index = 0
 
-        assert 0 <= index < len(indexed_dataset), "Index out of range"
+        # validate the index
+        assert isinstance(index, int)
+        assert 0 <= index < len(self.indexed_dataset())
+        assert isinstance(page_size, int) and page_size > 0
 
-        for i in range(index, index + page_size):
-            if i in indexed_dataset:
-                data.append(indexed_dataset[i])
+        data = []  # collect all indexed data
+        next_index = index + page_size
+
+        for value in range(index, next_index):
+            if self.indexed_dataset().get(value):
+                data.append(self.indexed_dataset()[value])
+            else:
+                value += 1
+                next_index += 1
 
         return {
-            "index": index,
-            "next_index": next_index,
-            "page_size": page_size,
-            "data": data,
+            'index': index,
+            'data': data,
+            'page_size': page_size,
+            'next_index': next_index
         }
