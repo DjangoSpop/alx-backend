@@ -1,8 +1,5 @@
-"""Module for BasicCache class."""
+ #!/usr/bin/env python3
 from base_caching import BaseCaching
-
-"""Module for BasicCache class."""
-
 
 class BasicCache(BaseCaching):
     """BasicCache class. Inherits from BaseCaching."""
@@ -16,10 +13,6 @@ class BasicCache(BaseCaching):
         """
         if key is not None and item is not None:
             self.cache_data[key] = item
-            if len(self.cache_data) > self.MAX_ITEMS:
-                key_discarded = sorted(self.cache_data.keys())[0]
-                del self.cache_data[key_discarded]
-                print("DISCARD: {}".format(key_discarded))
 
     def get(self, key):
         """Get an item by key.
