@@ -1,11 +1,13 @@
-"""Module for BasicCache class."""
+"""crate a class FIFOCache"""
 from base_caching import BaseCaching
 
-"""Module for BasicCache class."""
+class FIFOCache (BaseCaching):
+    """FIFOCache class. Inherits from BaseCaching."""
 
-
-class BasicCache(BaseCaching):
-    """BasicCache class. Inherits from BaseCaching."""
+    def __init__(self):
+        """Constructor"""
+        super().__init__()
+        self.queue = []
 
     def put(self, key, item):
         """Add an item in the cache.
@@ -15,11 +17,12 @@ class BasicCache(BaseCaching):
             item: Item to be added.
         """
         if key is not None and item is not None:
-            self.cache_data[key] = item
-            if len(self.cache_data) > self.MAX_ITEMS:
-                key_discarded = sorted(self.cache_data.keys())[0]
+            if len(self.cache_data) >= self.MAX_ITEMS:
+                key_discarded = self.queue.pop(0)
                 del self.cache_data[key_discarded]
                 print("DISCARD: {}".format(key_discarded))
+            self.cache_data[key] = item
+            self.queue.append(key)
 
     def get(self, key):
         """Get an item by key.
