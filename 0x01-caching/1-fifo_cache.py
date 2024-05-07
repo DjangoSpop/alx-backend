@@ -1,6 +1,7 @@
 """crate a class FIFOCache"""
 from base_caching import BaseCaching
 
+
 class FIFOCache (BaseCaching):
     """FIFOCache class. Inherits from BaseCaching."""
 
@@ -36,4 +37,3 @@ class FIFOCache (BaseCaching):
         if key is None or key not in self.cache_data:
             return None
         return self.cache_data[key]
-    
