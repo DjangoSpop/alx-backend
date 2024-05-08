@@ -14,16 +14,15 @@ class LFUCache(BaseCaching):
         __stats (list): A dictionary of cache keys for access count
         __rlock (RLock): Lock accessed resources to prevent race condition
     """
+
     def __init__(self):
-        """ Instantiation method, sets instance attributes
-        """
+        """ Instantiation method, sets instance attributes"""
         super().__init__()
         self.__stats = {}
         self.__rlock = RLock()
 
     def put(self, key, item):
-        """ Add an item in the cache
-        """
+        """ Add an item in the cache"""
         if key is not None and item is not None:
             keyOut = self._balance(key)
             with self.__rlock:
@@ -47,9 +46,11 @@ class LFUCache(BaseCaching):
         with self.__rlock:
             if keyIn not in self.__stats:
                 if len(self.cache_data) == BaseCaching.MAX_ITEMS:
-                    keyOut = min(self.__stats, key=self.__stats.get)  # Specify the type of the key parameter
+                    # Specify the type of the key parameter
+                    keyOut = min(
+                        self.__stats,
+                        key=lambda key: self.__stats.get(key))
                     self.cache_data.pop(keyOut)
                     self.__stats.pop(keyOut)
             self.__stats[keyIn] = self.__stats.get(keyIn, 0) + 1
         return keyOut
-    
