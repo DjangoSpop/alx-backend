@@ -4,7 +4,8 @@ wewill create a class that will
 cache useing python
 """
 BaseCaching = __import__('base_caching').BaseCaching
-
+from collections import defaultdict
+from datetime import datetime
 
 class LFUCache(BaseCaching):
     """
@@ -16,6 +17,8 @@ class LFUCache(BaseCaching):
     def __init__(self):
         """Intialise the constructor"""
         super().__init__()
+        self.frequency = defaultdict(int)
+        self.last_used = {}
 
     def put(self, key, item):
         """
@@ -35,19 +38,26 @@ class LFUCache(BaseCaching):
             min_freq = min(self.frequency.values())
             least_freq_keys = [
                 k for k, v in self.frequency.items() if v == min_freq]
-            if len(least_freq_keys) > 1:
-                least_recent_key = min(
-                    self.last_used.keys(), key=self.last_used.get)
-                least_freq_keys.remove(least_recent_key)
-            least_freq_key = least_freq_keys[0]
-            del self.cache_data[least_freq_key]
-            del self.frequency[least_freq_key]
-            del self.last_used[least_freq_key]
-            print("DISCARD:", least_freq_key)
+            if len(self.cache_data) >= self.MAX_ITEMS:
+            # Find the LFU item(s)
+                min_frequency = min(self.frequency.values())
+                lfu_items = [k for k, v in self.frequency.items() if v == min_frequency]
 
+            # If more than one item has the minimum frequency, use LRU
+            if len(lfu_items) > 1:
+                lfu_items.sort(key=lambda x: self.last_used[x])
+            
+            # Discard the LFU/LRU item
+            discard_key = lfu_items[0]
+            del self.cache_data[discard_key]
+            del self.frequency[discard_key]
+            del self.last_used[discard_key]
+            print(f"DISCARD: {discard_key}")
+
+        # Add the new item
         self.cache_data[key] = item
-        self.frequency[key] = self.frequency.get(key, 0) + 1
-        self.last_used[key] = self.current_time
+        self.frequency[key] += 1
+        self.last_used[key] = datetime.now()
 
     def get(self, key):
         """
