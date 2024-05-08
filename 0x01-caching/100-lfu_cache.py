@@ -36,19 +36,22 @@ class LFUCache(BaseCaching):
 
         if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
             min_freq = min(self.frequency.values())
-            least_freq_keys = [
-                k for k, v in self.frequency.items() if v == min_freq]
             if len(self.cache_data) >= self.MAX_ITEMS:
-            # Find the LFU item(s)
+                # Find the LFU item(s)
                 min_frequency = min(self.frequency.values())
                 lfu_items = [k for k, v in self.frequency.items() if v == min_frequency]
 
-            # If more than one item has the minimum frequency, use LRU
-            if len(lfu_items) > 1:
-                lfu_items.sort(key=lambda x: self.last_used[x])
-            
-            # Discard the LFU/LRU item
-            discard_key = lfu_items[0]
+                # If more than one item has the minimum frequency, use LRU
+                if len(lfu_items) > 1:
+                    lfu_items.sort(key=lambda x: self.last_used[x])
+                
+                # Discard the LFU/LRU item
+                discard_key = lfu_items[0]
+                del self.cache_data[discard_key]
+                del self.frequency[discard_key]
+                del self.last_used[discard_key]
+                print(f"DISCARD: {discard_key}")
+
             del self.cache_data[discard_key]
             del self.frequency[discard_key]
             del self.last_used[discard_key]
