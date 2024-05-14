@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Module that renders an index.html."""
-import flask
+from flask import Flask, render_template
 
-app = flask.Flask(__name__)
+
+app = Flask(__name__)
 
 @app.route('/')   
 def website():
@@ -11,4 +12,4 @@ def website():
     Returns:
         str: Rendered template as a string.
     """    
-    return flask.render_template('index.html')
+    return render_template('index.html')
